@@ -1,6 +1,23 @@
 [
   {
-    "name": "365 Organic Chicken Breast",
+    "name": "365 Organic Greek Yogurt Plain, 32 oz",
+    "store": "Whole Foods",
+    "category": "Dairy",
+    "diet": [
+      "High-Protein",
+      "Low-Carb"
+    ],
+    "price": 6.99,
+    "link": "https://www.wholefoodsmarket.com/product/365-organic-greek-yogurt-plain-32-oz",
+    "nutrition": {
+      "calories": 100,
+      "protein": 17,
+      "carbs": 6,
+      "fat": 0
+    }
+  },
+  {
+    "name": "Harvestland Organic Boneless Skinless Chicken Breasts",
     "store": "Whole Foods",
     "category": "Meat",
     "diet": [
@@ -9,30 +26,157 @@
       "Keto",
       "Gluten-Free"
     ],
-    "price": 10.99,
-    "link": "https://www.wholefoodsmarket.com/product/organic-chicken-breast",
+    "price": 9.57,
+    "link": "https://www.wholefoodsmarket.com/product/harvestland-organic-chicken-breasts",
     "nutrition": {
-      "calories": 140,
+      "calories": 120,
       "protein": 26,
       "carbs": 0,
-      "fat": 3
+      "fat": 2.5
     }
   },
   {
-    "name": "365 Cottage Cheese 2%",
+    "name": "Organic Hard-Boiled Eggs, Cage Free, Peeled, 16-count",
+    "store": "Whole Foods",
+    "category": "Dairy",
+    "diet": [
+      "High-Protein",
+      "Low-Carb",
+      "Keto",
+      "Gluten-Free"
+    ],
+    "price": 7.5,
+    "link": "https://www.wholefoodsmarket.com/product/organic-hard-boiled-eggs-16-pack",
+    "nutrition": {
+      "calories": 70,
+      "protein": 6,
+      "carbs": 0,
+      "fat": 5
+    }
+  },
+  {
+    "name": "Good Culture Cottage Cheese Organic Low-Fat 2%",
     "store": "Whole Foods",
     "category": "Dairy",
     "diet": [
       "High-Protein",
       "Low-Carb"
     ],
-    "price": 2.49,
-    "link": "https://www.wholefoodsmarket.com/product/365-cottage-cheese-2",
+    "price": 3.99,
+    "link": "https://www.wholefoodsmarket.com/product/good-culture-cottage-cheese-2-percent",
     "nutrition": {
       "calories": 110,
       "protein": 14,
       "carbs": 3,
-      "fat": 4
+      "fat": 2
+    }
+  },
+  {
+    "name": "365 Organic Creamy Almond Butter",
+    "store": "Whole Foods",
+    "category": "Pantry",
+    "diet": [
+      "High-Protein",
+      "Low-Carb",
+      "Keto"
+    ],
+    "price": 14.0,
+    "link": "https://www.wholefoodsmarket.com/product/365-organic-almond-butter",
+    "nutrition": {
+      "calories": 190,
+      "protein": 6,
+      "carbs": 4,
+      "fat": 17
+    }
+  },
+  {
+    "name": "KetoGenics Zero Carb Zero Sugar Keto Protein Powder",
+    "store": "Whole Foods",
+    "category": "Supplements",
+    "diet": [
+      "High-Protein",
+      "Low-Carb",
+      "Keto"
+    ],
+    "price": 43.99,
+    "link": "https://www.wholefoodsmarket.com/product/ketogenics-zero-carb-protein-powder",
+    "nutrition": {
+      "calories": 120,
+      "protein": 25,
+      "carbs": 0,
+      "fat": 1
+    }
+  },
+  {
+    "name": "Aidells Chicken & Apple Smoked Sausage",
+    "store": "Whole Foods",
+    "category": "Meat",
+    "diet": [
+      "High-Protein",
+      "Low-Carb",
+      "Gluten-Free"
+    ],
+    "price": 5.49,
+    "link": "https://www.wholefoodsmarket.com/product/aidells-chicken-apple-sausage",
+    "nutrition": {
+      "calories": 170,
+      "protein": 13,
+      "carbs": 3,
+      "fat": 12
+    }
+  },
+  {
+    "name": "Simple Truth Organic Extra Firm Tofu",
+    "store": "Whole Foods",
+    "category": "Plant-Based Protein",
+    "diet": [
+      "High-Protein",
+      "Low-Carb",
+      "Vegan"
+    ],
+    "price": 1.99,
+    "link": "https://www.wholefoodsmarket.com/product/simple-truth-organic-tofu",
+    "nutrition": {
+      "calories": 80,
+      "protein": 9,
+      "carbs": 2,
+      "fat": 4.5
+    }
+  },
+  {
+    "name": "Fairlife Nutrition Plan Chocolate Protein Shake",
+    "store": "Whole Foods",
+    "category": "Beverages",
+    "diet": [
+      "High-Protein",
+      "Low-Carb",
+      "Keto"
+    ],
+    "price": 23.22,
+    "link": "https://www.wholefoodsmarket.com/product/fairlife-nutrition-chocolate-shake",
+    "nutrition": {
+      "calories": 150,
+      "protein": 30,
+      "carbs": 3,
+      "fat": 2.5
+    }
+  },
+  {
+    "name": "Catalina Crunch Cereal",
+    "store": "Whole Foods",
+    "category": "Breakfast",
+    "diet": [
+      "High-Protein",
+      "Low-Carb",
+      "Keto"
+    ],
+    "price": 7.32,
+    "link": "https://www.wholefoodsmarket.com/product/catalina-crunch-cereal",
+    "nutrition": {
+      "calories": 110,
+      "protein": 11,
+      "carbs": 5,
+      "fat": 6
     }
   }
 ]
