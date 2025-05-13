@@ -1,40 +1,27 @@
+
 import streamlit as st
 import pandas as pd
 import io
+import json
+import os
 
 # ----------------------------
-# Mock Product Data
+# Load Products from JSON
 # ----------------------------
-PRODUCTS = [
-    {
-        "name": "Kirkland Organic Almond Butter",
-        "store": "Costco",
-        "diet": ["High-Protein, Low-Carb", "Keto"],
-        "category": "Snacks",
-        "price": 9.99,
-        "link": "https://www.costco.com/kirkland-signature-organic-almond-butter.product.100690406.html",
-        "nutrition": {"calories": 190, "protein": 7, "carbs": 6, "fat": 16}
-    },
-    {
-        "name": "365 Almond Flour Crackers",
-        "store": "Whole Foods",
-        "diet": ["High-Protein, Low-Carb", "Keto"],
-        "category": "Snacks",
-        "price": 4.49,
-        "link": "https://www.wholefoodsmarket.com/product/365-almond-flour-crackers",
-        "nutrition": {"calories": 150, "protein": 5, "carbs": 8, "fat": 12}
-    },
-    {
-        "name": "Whole Foods Organic Chicken Breast",
-        "store": "Whole Foods",
-        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
-        "category": "Meat",
-        "price": 12.99,
-        "link": "https://www.wholefoodsmarket.com/product/organic-chicken-breast",
-        "nutrition": {"calories": 140, "protein": 26, "carbs": 0, "fat": 3}
-    },
-    # Add more products here...
-]
+store_files = {
+    "Costco": "products_costco.json",
+    "Whole Foods": "products_wholefoods.json"
+}
+
+store = st.sidebar.selectbox("Where are you shopping?", list(store_files.keys()))
+
+# Load selected store's product data
+try:
+    with open(store_files[store], "r") as f:
+        PRODUCTS = json.load(f)
+except Exception as e:
+    st.error(f"Error loading products for {store}: {e}")
+    PRODUCTS = []
 
 # ----------------------------
 # Session State
@@ -48,9 +35,6 @@ if "favorites" not in st.session_state:
 # Sidebar Filters
 # ----------------------------
 st.sidebar.header("Filter Products")
-store_options = sorted(list(set(p["store"] for p in PRODUCTS)))
-store = st.sidebar.selectbox("Where are you shopping?", store_options)
-
 diet_options = sorted(list(set(d for p in PRODUCTS for d in p["diet"])))
 diet = st.sidebar.selectbox("Choose a diet", diet_options)
 
@@ -65,8 +49,7 @@ search_query = st.sidebar.text_input("Search by product name:")
 # ----------------------------
 filtered_products = [
     p for p in PRODUCTS
-    if p["store"] == store
-    and diet in p["diet"]
+    if diet in p["diet"]
     and (category == "All" or p["category"] == category)
     and (search_query.lower() in p["name"].lower())
 ]
