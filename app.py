@@ -9,7 +9,7 @@ PRODUCTS = [
         "store": "Costco",
         "diet": "High-Protein, Low-Carb",
         "category": "Snacks",
-        "image": "https://via.placeholder.com/100?text=Almond+Butter",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Almonds_in_shell_and_shelled.jpg/320px-Almonds_in_shell_and_shelled.jpg",
         "nutrition": {
             "calories": 190,
             "protein": 7,
@@ -22,7 +22,7 @@ PRODUCTS = [
         "store": "Costco",
         "diet": "High-Protein, Low-Carb",
         "category": "Pantry",
-        "image": "https://via.placeholder.com/100?text=Coconut+Milk",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Coconut_milk_in_glass.jpg",
         "nutrition": {
             "calories": 120,
             "protein": 1,
@@ -35,7 +35,7 @@ PRODUCTS = [
         "store": "Costco",
         "diet": "High-Protein, Low-Carb",
         "category": "Meat",
-        "image": "https://via.placeholder.com/100?text=Sausage",
+        "image": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Chicken_sausages.JPG",
         "nutrition": {
             "calories": 170,
             "protein": 13,
