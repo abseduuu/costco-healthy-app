@@ -82,11 +82,32 @@ for product in filtered_products:
         st.markdown("---")
 
 # ----------------------------
-# View Cart
+# View Cart with Removal + Totals
 # ----------------------------
 st.sidebar.header("🛒 Your Cart")
+
+total_macros = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
+updated_cart = []
+
 if st.session_state.cart:
     for item in st.session_state.cart:
-        st.sidebar.write("•", item)
+        product = next((p for p in PRODUCTS if p["name"] == item), None)
+        if product:
+            st.sidebar.write(f"**{item}**")
+            if st.sidebar.button(f"Remove {item}"):
+                continue  # Skip adding to updated_cart to remove
+            updated_cart.append(item)
+            for key in total_macros:
+                total_macros[key] += product["nutrition"][key]
 else:
     st.sidebar.write("Cart is empty.")
+
+st.session_state.cart = updated_cart
+
+if updated_cart:
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("Total Macros")
+    st.sidebar.write(f"Calories: {total_macros['calories']}")
+    st.sidebar.write(f"Protein: {total_macros['protein']}g")
+    st.sidebar.write(f"Carbs: {total_macros['carbs']}g")
+    st.sidebar.write(f"Fat: {total_macros['fat']}g")
