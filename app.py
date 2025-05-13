@@ -7,13 +7,24 @@ HEALTHY_KEYWORDS = ["organic", "low carb", "keto", "gluten-free", "high protein"
 
 # 🔹 Fallback sample data (mocked)
 MOCK_HEALTHY_PRODUCTS = [
-    "Kirkland Organic Almond Butter - No Added Sugar",
-    "Thai Kitchen Organic Coconut Milk (Unsweetened)",
-    "Wildbrine Korean Kimchi - Probiotic, Vegan",
-    "Kirkland Signature Cage-Free Egg Whites",
-    "Aidells Chicken & Apple Sausage - Gluten-Free",
-    "Kirkland Organic Roasted Seaweed Snacks",
+    {
+        "name": "Kirkland Organic Almond Butter - No Added Sugar",
+        "link": "https://www.costco.com/kirkland-signature-organic-almond-butter-27-oz%2C-2-count.product.100690406.html",
+        "image": "https://mobilecontent.costco.com/live/resource/img/2446343_1.jpg"
+    },
+    {
+        "name": "Thai Kitchen Organic Coconut Milk (Unsweetened)",
+        "link": "https://www.costco.com/thai-kitchen-organic-coconut-milk-unsweetened-13.66-fl-oz%2C-6-count.product.100679472.html",
+        "image": "https://mobilecontent.costco.com/live/resource/img/2467792_1.jpg"
+    },
+    {
+        "name": "Wildbrine Korean Kimchi - Probiotic, Vegan",
+        "link": "https://www.costco.com/wildbrine-korean-kimchi%2C-26-oz.product.100669365.html",
+        "image": "https://mobilecontent.costco.com/live/resource/img/100669365_1.jpg"
+    }
+    # Add more items if you'd like!
 ]
+
 
 def is_healthy(text):
     return any(keyword in text.lower() for keyword in HEALTHY_KEYWORDS)
@@ -52,5 +63,11 @@ if st.button("Find Healthy Products") and url:
         results = scrape_costco_products(url)
 
     st.success(f"Found {len(results)} healthy product(s):")
-    for item in results:
+   for item in results:
+    if isinstance(item, dict):
+        st.image(item["image"], width=100)
+        st.markdown(f"[**{item['name']}**]({item['link']})", unsafe_allow_html=True)
+        st.markdown("---")
+    else:
         st.write("•", item)
+
