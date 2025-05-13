@@ -209,3 +209,39 @@ if st.session_state.favorites:
         st.sidebar.write(f"• {item}")
 else:
     st.sidebar.write("No favorites yet.")
+
+# ----------------------------
+# Export / Copy Cart
+# ----------------------------
+import pandas as pd
+import io
+
+if updated_cart:
+    st.sidebar.markdown("---")
+    st.sidebar.subheader("🧾 Export Your Cart")
+
+    # Build product + macro list
+    cart_data = []
+    for item in updated_cart:
+        product = next((p for p in PRODUCTS if p["name"] == item), None)
+        if product:
+            cart_data.append({
+                "Product": product["name"],
+                **product["nutrition"]
+            })
+
+    df = pd.DataFrame(cart_data)
+
+    # Show text list
+    st.sidebar.text_area("Copy List:", "\n".join(updated_cart), height=150)
+
+    # Download as CSV
+    csv_buffer = io.StringIO()
+    df.to_csv(csv_buffer, index=False)
+    st.sidebar.download_button(
+        label="⬇️ Download as CSV",
+        data=csv_buffer.getvalue(),
+        file_name="my_healthy_cart.csv",
+        mime="text/csv"
+    )
+
