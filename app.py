@@ -63,11 +63,11 @@ if st.button("Find Healthy Products") and url:
         results = scrape_costco_products(url)
 
     st.success(f"Found {len(results)} healthy product(s):")
-   for item in results:
-    if isinstance(item, dict):
-        st.image(item["image"], width=100)
-        st.markdown(f"[**{item['name']}**]({item['link']})", unsafe_allow_html=True)
-        st.markdown("---")
-    else:
-        st.write("•", item)
+    for item in results:
+        if isinstance(item, dict):
+            st.image(item["image"], width=100)
+            st.markdown(f"[**{item['name']}**]({item['link']})", unsafe_allow_html=True)
+            st.markdown("---")
+        else:
+            st.write("•", item)
 
