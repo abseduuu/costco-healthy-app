@@ -1,0 +1,40 @@
+[
+  {
+    "name": "Kirkland Signature Turkey Burgers",
+    "store": "Costco",
+    "category": "Frozen",
+    "diet": [
+      "High-Protein",
+      "Low-Carb",
+      "Keto",
+      "Gluten-Free"
+    ],
+    "price": 13.99,
+    "link": "https://www.costco.com/kirkland-signature-turkey-burgers.product.100118566.html",
+    "nutrition": {
+      "calories": 200,
+      "protein": 21,
+      "carbs": 0,
+      "fat": 12
+    }
+  },
+  {
+    "name": "Chomps Grass-Fed Beef Sticks",
+    "store": "Costco",
+    "category": "Snacks",
+    "diet": [
+      "High-Protein",
+      "Low-Carb",
+      "Keto",
+      "Gluten-Free"
+    ],
+    "price": 22.99,
+    "link": "https://www.costco.com/chomps-beef-sticks.product.100522345.html",
+    "nutrition": {
+      "calories": 100,
+      "protein": 9,
+      "carbs": 0,
+      "fat": 6
+    }
+  }
+]

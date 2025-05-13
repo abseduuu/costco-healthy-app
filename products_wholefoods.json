@@ -1,0 +1,38 @@
+[
+  {
+    "name": "365 Organic Chicken Breast",
+    "store": "Whole Foods",
+    "category": "Meat",
+    "diet": [
+      "High-Protein",
+      "Low-Carb",
+      "Keto",
+      "Gluten-Free"
+    ],
+    "price": 10.99,
+    "link": "https://www.wholefoodsmarket.com/product/organic-chicken-breast",
+    "nutrition": {
+      "calories": 140,
+      "protein": 26,
+      "carbs": 0,
+      "fat": 3
+    }
+  },
+  {
+    "name": "365 Cottage Cheese 2%",
+    "store": "Whole Foods",
+    "category": "Dairy",
+    "diet": [
+      "High-Protein",
+      "Low-Carb"
+    ],
+    "price": 2.49,
+    "link": "https://www.wholefoodsmarket.com/product/365-cottage-cheese-2",
+    "nutrition": {
+      "calories": 110,
+      "protein": 14,
+      "carbs": 3,
+      "fat": 4
+    }
+  }
+]
