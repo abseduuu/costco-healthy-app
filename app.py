@@ -11,76 +11,17 @@ PRODUCTS = [
         "store": "Costco",
         "diet": ["High-Protein, Low-Carb", "Keto"],
         "category": "Snacks",
+        "price": 9.99,
+        "link": "https://www.costco.com/kirkland-signature-organic-almond-butter.product.100690406.html",
         "nutrition": {"calories": 190, "protein": 7, "carbs": 6, "fat": 16}
-    },
-    {
-        "name": "Thai Kitchen Organic Coconut Milk",
-        "store": "Costco",
-        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
-        "category": "Pantry",
-        "nutrition": {"calories": 120, "protein": 1, "carbs": 2, "fat": 12}
-    },
-    {
-        "name": "Aidells Chicken & Apple Sausage",
-        "store": "Costco",
-        "diet": ["High-Protein, Low-Carb", "Gluten-Free"],
-        "category": "Meat",
-        "nutrition": {"calories": 170, "protein": 13, "carbs": 3, "fat": 12}
-    },
-    {
-        "name": "Kirkland Hard-Boiled Eggs 2-Pack",
-        "store": "Costco",
-        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
-        "category": "Dairy",
-        "nutrition": {"calories": 140, "protein": 12, "carbs": 1, "fat": 10}
-    },
-    {
-        "name": "Good Culture Cottage Cheese, 2%",
-        "store": "Costco",
-        "diet": ["High-Protein, Low-Carb", "Gluten-Free"],
-        "category": "Dairy",
-        "nutrition": {"calories": 110, "protein": 14, "carbs": 3, "fat": 4}
-    },
-    {
-        "name": "Chomps Grass-Fed Beef Stick",
-        "store": "Costco",
-        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
-        "category": "Snacks",
-        "nutrition": {"calories": 100, "protein": 9, "carbs": 0, "fat": 6}
-    },
-    {
-        "name": "Nature’s Garden Keto Snack Mix",
-        "store": "Costco",
-        "diet": ["High-Protein, Low-Carb", "Keto"],
-        "category": "Snacks",
-        "nutrition": {"calories": 180, "protein": 6, "carbs": 4, "fat": 16}
-    },
-    {
-        "name": "Kirkland Signature Turkey Burgers",
-        "store": "Costco",
-        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
-        "category": "Frozen",
-        "nutrition": {"calories": 200, "protein": 21, "carbs": 0, "fat": 12}
-    },
-    {
-        "name": "Organic Blueberries (Fresh)",
-        "store": "Costco",
-        "diet": ["Gluten-Free"],
-        "category": "Fruit",
-        "nutrition": {"calories": 80, "protein": 1, "carbs": 18, "fat": 0}
-    },
-    {
-        "name": "365 Organic Cage-Free Eggs",
-        "store": "Whole Foods",
-        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
-        "category": "Dairy",
-        "nutrition": {"calories": 70, "protein": 6, "carbs": 0, "fat": 5}
     },
     {
         "name": "365 Almond Flour Crackers",
         "store": "Whole Foods",
         "diet": ["High-Protein, Low-Carb", "Keto"],
         "category": "Snacks",
+        "price": 4.49,
+        "link": "https://www.wholefoodsmarket.com/product/365-almond-flour-crackers",
         "nutrition": {"calories": 150, "protein": 5, "carbs": 8, "fat": 12}
     },
     {
@@ -88,8 +29,11 @@ PRODUCTS = [
         "store": "Whole Foods",
         "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
         "category": "Meat",
+        "price": 12.99,
+        "link": "https://www.wholefoodsmarket.com/product/organic-chicken-breast",
         "nutrition": {"calories": 140, "protein": 26, "carbs": 0, "fat": 3}
-    }
+    },
+    # Add more products here...
 ]
 
 # ----------------------------
@@ -132,24 +76,26 @@ filtered_products = [
 # ----------------------------
 st.title("🥦 Healthy Grocery Finder")
 
-for product in filtered_products:
+for idx, product in enumerate(filtered_products):
     with st.container():
         st.subheader(product["name"])
         st.write(f"**Store:** {product['store']}  |  **Category:** {product['category']}")
         st.write("**Diet Tags:**", ", ".join(product["diet"]))
+        st.write(f"**Price:** ${product['price']:.2f}")
+        st.markdown(f"[🔗 View Product]({product['link']})", unsafe_allow_html=True)
         st.write("**Nutrition per serving:**")
         st.write(product["nutrition"])
 
-        if st.button(f"Add to Cart: {product['name']}"):
+        if st.button(f"Add to Cart: {product['name']}", key=f"add_{idx}"):
             st.session_state.cart.append(product["name"])
             st.success(f"Added to cart: {product['name']}")
 
         if product["name"] in st.session_state.favorites:
-            if st.button(f"Unfavorite: {product['name']}"):
+            if st.button(f"Unfavorite: {product['name']}", key=f"unfav_{idx}"):
                 st.session_state.favorites.remove(product["name"])
                 st.warning(f"Removed from favorites: {product['name']}")
         else:
-            if st.button(f"⭐ Favorite: {product['name']}"):
+            if st.button(f"⭐ Favorite: {product['name']}", key=f"fav_{idx}"):
                 st.session_state.favorites.append(product["name"])
                 st.success(f"Added to favorites: {product['name']}")
 
@@ -160,16 +106,18 @@ for product in filtered_products:
 # ----------------------------
 st.sidebar.header("🛒 Your Cart")
 total_macros = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
+total_price = 0.0
 updated_cart = []
 
 if st.session_state.cart:
-    for item in st.session_state.cart:
+    for idx, item in enumerate(st.session_state.cart):
         product = next((p for p in PRODUCTS if p["name"] == item), None)
         if product:
-            st.sidebar.write(f"**{item}**")
-            if st.sidebar.button(f"Remove {item}"):
+            st.sidebar.write(f"**{item}** - ${product['price']:.2f}")
+            if st.sidebar.button(f"Remove {item}", key=f"remove_{idx}"):
                 continue
             updated_cart.append(item)
+            total_price += product["price"]
             for k in total_macros:
                 total_macros[k] += product["nutrition"][k]
 else:
@@ -184,6 +132,7 @@ if updated_cart:
     st.sidebar.write(f"Protein: {total_macros['protein']}g")
     st.sidebar.write(f"Carbs: {total_macros['carbs']}g")
     st.sidebar.write(f"Fat: {total_macros['fat']}g")
+    st.sidebar.write(f"💵 **Total Price:** ${total_price:.2f}")
 
 # ----------------------------
 # Favorites
@@ -208,6 +157,7 @@ if updated_cart:
         if product:
             cart_data.append({
                 "Product": product["name"],
+                "Price": product["price"],
                 **product["nutrition"]
             })
 
