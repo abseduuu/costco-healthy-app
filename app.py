@@ -1,73 +1,92 @@
 import streamlit as st
-import requests
-from bs4 import BeautifulSoup
 
-# Healthy keyword tags to look for
-HEALTHY_KEYWORDS = ["organic", "low carb", "keto", "gluten-free", "high protein", "no added sugar"]
-
-# 🔹 Fallback sample data (mocked)
-MOCK_HEALTHY_PRODUCTS = [
+# ----------------------------
+# Mock Product Data
+# ----------------------------
+PRODUCTS = [
     {
-        "name": "Kirkland Organic Almond Butter - No Added Sugar",
-        "link": "https://www.costco.com/kirkland-signature-organic-almond-butter-27-oz%2C-2-count.product.100690406.html",
-        "image": "https://mobilecontent.costco.com/live/resource/img/100690406_0.jpg"
+        "name": "Kirkland Organic Almond Butter",
+        "store": "Costco",
+        "diet": "High-Protein, Low-Carb",
+        "category": "Snacks",
+        "nutrition": {
+            "calories": 190,
+            "protein": 7,
+            "carbs": 6,
+            "fat": 16
+        }
     },
     {
-        "name": "Thai Kitchen Organic Coconut Milk (Unsweetened)",
-        "link": "https://www.costco.com/thai-kitchen-organic-coconut-milk-unsweetened-13.66-fl-oz%2C-6-count.product.100679472.html",
-        "image": "https://mobilecontent.costco.com/live/resource/img/100679472_0.jpg"
+        "name": "Thai Kitchen Organic Coconut Milk",
+        "store": "Costco",
+        "diet": "High-Protein, Low-Carb",
+        "category": "Pantry",
+        "nutrition": {
+            "calories": 120,
+            "protein": 1,
+            "carbs": 2,
+            "fat": 12
+        }
     },
     {
-        "name": "Wildbrine Korean Kimchi - Probiotic, Vegan",
-        "link": "https://www.costco.com/wildbrine-korean-kimchi%2C-26-oz.product.100669365.html",
-        "image": "https://mobilecontent.costco.com/live/resource/img/100669365_0.jpg"
+        "name": "Aidells Chicken & Apple Sausage",
+        "store": "Costco",
+        "diet": "High-Protein, Low-Carb",
+        "category": "Meat",
+        "nutrition": {
+            "calories": 170,
+            "protein": 13,
+            "carbs": 3,
+            "fat": 12
+        }
     }
 ]
 
+# ----------------------------
+# Session State for Cart
+# ----------------------------
+if "cart" not in st.session_state:
+    st.session_state.cart = []
 
+# ----------------------------
+# Sidebar Filters
+# ----------------------------
+st.sidebar.header("Filter Products")
+store = st.sidebar.selectbox("Where are you shopping?", ["Costco"])
+diet = st.sidebar.selectbox("Choose a diet", ["High-Protein, Low-Carb"])
+category = st.sidebar.selectbox("Select a category", ["All"] + sorted(list(set(p["category"] for p in PRODUCTS))))
 
-def is_healthy(text):
-    return any(keyword in text.lower() for keyword in HEALTHY_KEYWORDS)
+# ----------------------------
+# Product Filtering
+# ----------------------------
+filtered_products = [
+    p for p in PRODUCTS
+    if p["store"] == store and p["diet"] == diet and (category == "All" or p["category"] == category)
+]
 
-def scrape_costco_products(url):
-    headers = {"User-Agent": "Mozilla/5.0"}
-    try:
-        response = requests.get(url, headers=headers, timeout=10)
-        if response.status_code != 200:
-            return [f"⚠️ Failed to fetch page (status code: {response.status_code})"]
+# ----------------------------
+# Main App Content
+# ----------------------------
+st.title("🥦 Healthy Grocery Finder")
+st.markdown("Use the sidebar to choose your store, diet, and category.")
 
-        soup = BeautifulSoup(response.text, "html.parser")
-        products = []
+for product in filtered_products:
+    with st.container():
+        st.subheader(product["name"])
+        st.write(f"**Category:** {product['category']}")
+        st.write("**Nutrition per serving:**")
+        st.write(product["nutrition"])
+        if st.button(f"Add to Cart: {product['name']}"):
+            st.session_state.cart.append(product["name"])
+            st.success(f"Added to cart: {product['name']}")
+        st.markdown("---")
 
-        product_elements = soup.find_all("div", class_="product-tile-set")
-        if not product_elements:
-            return ["⚠️ No product tiles found. Try a category page."]
-
-        for product in product_elements:
-            name = product.get_text(separator=" ").strip()
-            if is_healthy(name):
-                products.append(name)
-
-        return products if products else ["ℹ️ No healthy products found on this page."]
-    except Exception as e:
-        return ["❌ Could not load Costco page — using mock data instead."] + MOCK_HEALTHY_PRODUCTS
-
-# 🔷 Streamlit App UI
-st.title("🥦 Costco Healthy Product Finder")
-st.write("Paste a Costco category URL (like https://www.costco.com/frozen-food.html), and we’ll find healthy items!")
-
-url = st.text_input("Enter Costco URL:")
-
-if st.button("Find Healthy Products") and url:
-    with st.spinner("Scanning Costco page..."):
-        results = scrape_costco_products(url)
-
-    st.success(f"Found {len(results)} healthy product(s):")
-    for item in results:
-        if isinstance(item, dict):
-            st.image(item["image"], width=100)
-            st.markdown(f"[**{item['name']}**]({item['link']})", unsafe_allow_html=True)
-            st.markdown("---")
-        else:
-            st.write("•", item)
-
+# ----------------------------
+# View Cart
+# ----------------------------
+st.sidebar.header("🛒 Your Cart")
+if st.session_state.cart:
+    for item in st.session_state.cart:
+        st.sidebar.write("•", item)
+else:
+    st.sidebar.write("Cart is empty.")
