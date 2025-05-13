@@ -13,21 +13,26 @@ def is_healthy(text):
 def scrape_costco_products(url):
     headers = {"User-Agent": "Mozilla/5.0"}
     try:
-        response = requests.get(url, headers=headers)
+        response = requests.get(url, headers=headers, timeout=10)
+        if response.status_code != 200:
+            return [f"Failed to fetch page. Status code: {response.status_code}"]
+
         soup = BeautifulSoup(response.text, "html.parser")
         products = []
 
-        # Look for product tiles (Costco layout is dynamic, so this may need adjusting)
         product_elements = soup.find_all("div", class_="product-tile-set")
+
+        if not product_elements:
+            return ["No product tiles found. Try a category page instead of a product page."]
 
         for product in product_elements:
             name = product.get_text(separator=" ").strip()
             if is_healthy(name):
                 products.append(name)
 
-        return products
+        return products if products else ["No healthy products found on this page."]
     except Exception as e:
-        return [f"Error scraping site: {e}"]
+        return [f"Error: {e}"]
 
 # Streamlit app layout
 st.title("🥦 Costco Healthy Product Finder")
