@@ -1,126 +1,102 @@
 import streamlit as st
+import pandas as pd
+import io
 
 # ----------------------------
-# Mock Product Data (No Images)
+# Mock Product Data
 # ----------------------------
 PRODUCTS = [
     {
         "name": "Kirkland Organic Almond Butter",
         "store": "Costco",
-        "diet": "High-Protein, Low-Carb",
+        "diet": ["High-Protein, Low-Carb", "Keto"],
         "category": "Snacks",
-        "nutrition": {
-            "calories": 190,
-            "protein": 7,
-            "carbs": 6,
-            "fat": 16
-        }
+        "nutrition": {"calories": 190, "protein": 7, "carbs": 6, "fat": 16}
     },
     {
         "name": "Thai Kitchen Organic Coconut Milk",
         "store": "Costco",
-        "diet": "High-Protein, Low-Carb",
+        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
         "category": "Pantry",
-        "nutrition": {
-            "calories": 120,
-            "protein": 1,
-            "carbs": 2,
-            "fat": 12
-        }
+        "nutrition": {"calories": 120, "protein": 1, "carbs": 2, "fat": 12}
     },
     {
         "name": "Aidells Chicken & Apple Sausage",
         "store": "Costco",
-        "diet": "High-Protein, Low-Carb",
+        "diet": ["High-Protein, Low-Carb", "Gluten-Free"],
         "category": "Meat",
-        "nutrition": {
-            "calories": 170,
-            "protein": 13,
-            "carbs": 3,
-            "fat": 12
-        }
+        "nutrition": {"calories": 170, "protein": 13, "carbs": 3, "fat": 12}
     },
     {
         "name": "Kirkland Hard-Boiled Eggs 2-Pack",
         "store": "Costco",
-        "diet": "High-Protein, Low-Carb",
+        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
         "category": "Dairy",
-        "nutrition": {
-            "calories": 140,
-            "protein": 12,
-            "carbs": 1,
-            "fat": 10
-        }
+        "nutrition": {"calories": 140, "protein": 12, "carbs": 1, "fat": 10}
     },
     {
         "name": "Good Culture Cottage Cheese, 2%",
         "store": "Costco",
-        "diet": "High-Protein, Low-Carb",
+        "diet": ["High-Protein, Low-Carb", "Gluten-Free"],
         "category": "Dairy",
-        "nutrition": {
-            "calories": 110,
-            "protein": 14,
-            "carbs": 3,
-            "fat": 4
-        }
+        "nutrition": {"calories": 110, "protein": 14, "carbs": 3, "fat": 4}
     },
     {
         "name": "Chomps Grass-Fed Beef Stick",
         "store": "Costco",
-        "diet": "High-Protein, Low-Carb",
+        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
         "category": "Snacks",
-        "nutrition": {
-            "calories": 100,
-            "protein": 9,
-            "carbs": 0,
-            "fat": 6
-        }
+        "nutrition": {"calories": 100, "protein": 9, "carbs": 0, "fat": 6}
     },
     {
         "name": "Nature’s Garden Keto Snack Mix",
         "store": "Costco",
-        "diet": "High-Protein, Low-Carb",
+        "diet": ["High-Protein, Low-Carb", "Keto"],
         "category": "Snacks",
-        "nutrition": {
-            "calories": 180,
-            "protein": 6,
-            "carbs": 4,
-            "fat": 16
-        }
+        "nutrition": {"calories": 180, "protein": 6, "carbs": 4, "fat": 16}
     },
     {
         "name": "Kirkland Signature Turkey Burgers",
         "store": "Costco",
-        "diet": "High-Protein, Low-Carb",
+        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
         "category": "Frozen",
-        "nutrition": {
-            "calories": 200,
-            "protein": 21,
-            "carbs": 0,
-            "fat": 12
-        }
+        "nutrition": {"calories": 200, "protein": 21, "carbs": 0, "fat": 12}
     },
     {
         "name": "Organic Blueberries (Fresh)",
         "store": "Costco",
-        "diet": "High-Protein, Low-Carb",
+        "diet": ["Gluten-Free"],
         "category": "Fruit",
-        "nutrition": {
-            "calories": 80,
-            "protein": 1,
-            "carbs": 18,
-            "fat": 0
-        }
+        "nutrition": {"calories": 80, "protein": 1, "carbs": 18, "fat": 0}
+    },
+    {
+        "name": "365 Organic Cage-Free Eggs",
+        "store": "Whole Foods",
+        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
+        "category": "Dairy",
+        "nutrition": {"calories": 70, "protein": 6, "carbs": 0, "fat": 5}
+    },
+    {
+        "name": "365 Almond Flour Crackers",
+        "store": "Whole Foods",
+        "diet": ["High-Protein, Low-Carb", "Keto"],
+        "category": "Snacks",
+        "nutrition": {"calories": 150, "protein": 5, "carbs": 8, "fat": 12}
+    },
+    {
+        "name": "Whole Foods Organic Chicken Breast",
+        "store": "Whole Foods",
+        "diet": ["High-Protein, Low-Carb", "Keto", "Gluten-Free"],
+        "category": "Meat",
+        "nutrition": {"calories": 140, "protein": 26, "carbs": 0, "fat": 3}
     }
 ]
 
-
 # ----------------------------
-# Session State for Cart & Favorites
+# Session State
 # ----------------------------
 if "cart" not in st.session_state:
     st.session_state.cart = []
-
 if "favorites" not in st.session_state:
     st.session_state.favorites = []
 
@@ -128,35 +104,46 @@ if "favorites" not in st.session_state:
 # Sidebar Filters
 # ----------------------------
 st.sidebar.header("Filter Products")
-store = st.sidebar.selectbox("Where are you shopping?", ["Costco"])
-diet = st.sidebar.selectbox("Choose a diet", ["High-Protein, Low-Carb"])
-category = st.sidebar.selectbox("Select a category", ["All"] + sorted(list(set(p["category"] for p in PRODUCTS))))
+store_options = sorted(list(set(p["store"] for p in PRODUCTS)))
+store = st.sidebar.selectbox("Where are you shopping?", store_options)
+
+diet_options = sorted(list(set(d for p in PRODUCTS for d in p["diet"])))
+diet = st.sidebar.selectbox("Choose a diet", diet_options)
+
+category = st.sidebar.selectbox(
+    "Select a category", ["All"] + sorted(list(set(p["category"] for p in PRODUCTS)))
+)
+
+search_query = st.sidebar.text_input("Search by product name:")
 
 # ----------------------------
-# Product Filtering
+# Filter Products
 # ----------------------------
 filtered_products = [
     p for p in PRODUCTS
-    if p["store"] == store and p["diet"] == diet and (category == "All" or p["category"] == category)
+    if p["store"] == store
+    and diet in p["diet"]
+    and (category == "All" or p["category"] == category)
+    and (search_query.lower() in p["name"].lower())
 ]
 
 # ----------------------------
-# Main App Content
+# Main Content
 # ----------------------------
 st.title("🥦 Healthy Grocery Finder")
-st.markdown("Use the sidebar to choose your store, diet, and category.")
 
 for product in filtered_products:
     with st.container():
         st.subheader(product["name"])
-        st.write(f"**Category:** {product['category']}")
+        st.write(f"**Store:** {product['store']}  |  **Category:** {product['category']}")
+        st.write("**Diet Tags:**", ", ".join(product["diet"]))
         st.write("**Nutrition per serving:**")
         st.write(product["nutrition"])
-        
+
         if st.button(f"Add to Cart: {product['name']}"):
             st.session_state.cart.append(product["name"])
             st.success(f"Added to cart: {product['name']}")
-        
+
         if product["name"] in st.session_state.favorites:
             if st.button(f"Unfavorite: {product['name']}"):
                 st.session_state.favorites.remove(product["name"])
@@ -165,14 +152,13 @@ for product in filtered_products:
             if st.button(f"⭐ Favorite: {product['name']}"):
                 st.session_state.favorites.append(product["name"])
                 st.success(f"Added to favorites: {product['name']}")
-        
+
         st.markdown("---")
 
 # ----------------------------
-# View Cart with Removal + Totals
+# Cart and Favorites in Sidebar
 # ----------------------------
 st.sidebar.header("🛒 Your Cart")
-
 total_macros = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
 updated_cart = []
 
@@ -182,10 +168,10 @@ if st.session_state.cart:
         if product:
             st.sidebar.write(f"**{item}**")
             if st.sidebar.button(f"Remove {item}"):
-                continue  # Skip adding to updated_cart to remove
+                continue
             updated_cart.append(item)
-            for key in total_macros:
-                total_macros[key] += product["nutrition"][key]
+            for k in total_macros:
+                total_macros[k] += product["nutrition"][k]
 else:
     st.sidebar.write("Cart is empty.")
 
@@ -200,10 +186,9 @@ if updated_cart:
     st.sidebar.write(f"Fat: {total_macros['fat']}g")
 
 # ----------------------------
-# View Favorites
+# Favorites
 # ----------------------------
 st.sidebar.header("⭐ Favorites")
-
 if st.session_state.favorites:
     for item in st.session_state.favorites:
         st.sidebar.write(f"• {item}")
@@ -213,14 +198,10 @@ else:
 # ----------------------------
 # Export / Copy Cart
 # ----------------------------
-import pandas as pd
-import io
-
 if updated_cart:
     st.sidebar.markdown("---")
     st.sidebar.subheader("🧾 Export Your Cart")
 
-    # Build product + macro list
     cart_data = []
     for item in updated_cart:
         product = next((p for p in PRODUCTS if p["name"] == item), None)
@@ -231,11 +212,8 @@ if updated_cart:
             })
 
     df = pd.DataFrame(cart_data)
-
-    # Show text list
     st.sidebar.text_area("Copy List:", "\n".join(updated_cart), height=150)
 
-    # Download as CSV
     csv_buffer = io.StringIO()
     df.to_csv(csv_buffer, index=False)
     st.sidebar.download_button(
@@ -244,4 +222,3 @@ if updated_cart:
         file_name="my_healthy_cart.csv",
         mime="text/csv"
     )
-
