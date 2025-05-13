@@ -116,10 +116,13 @@ PRODUCTS = [
 
 
 # ----------------------------
-# Session State for Cart
+# Session State for Cart & Favorites
 # ----------------------------
 if "cart" not in st.session_state:
     st.session_state.cart = []
+
+if "favorites" not in st.session_state:
+    st.session_state.favorites = []
 
 # ----------------------------
 # Sidebar Filters
@@ -149,9 +152,20 @@ for product in filtered_products:
         st.write(f"**Category:** {product['category']}")
         st.write("**Nutrition per serving:**")
         st.write(product["nutrition"])
+        
         if st.button(f"Add to Cart: {product['name']}"):
             st.session_state.cart.append(product["name"])
             st.success(f"Added to cart: {product['name']}")
+        
+        if product["name"] in st.session_state.favorites:
+            if st.button(f"Unfavorite: {product['name']}"):
+                st.session_state.favorites.remove(product["name"])
+                st.warning(f"Removed from favorites: {product['name']}")
+        else:
+            if st.button(f"⭐ Favorite: {product['name']}"):
+                st.session_state.favorites.append(product["name"])
+                st.success(f"Added to favorites: {product['name']}")
+        
         st.markdown("---")
 
 # ----------------------------
@@ -184,3 +198,14 @@ if updated_cart:
     st.sidebar.write(f"Protein: {total_macros['protein']}g")
     st.sidebar.write(f"Carbs: {total_macros['carbs']}g")
     st.sidebar.write(f"Fat: {total_macros['fat']}g")
+
+# ----------------------------
+# View Favorites
+# ----------------------------
+st.sidebar.header("⭐ Favorites")
+
+if st.session_state.favorites:
+    for item in st.session_state.favorites:
+        st.sidebar.write(f"• {item}")
+else:
+    st.sidebar.write("No favorites yet.")
