@@ -1,7 +1,7 @@
 import streamlit as st
 
 # ----------------------------
-# Mock Product Data
+# Mock Product Data with Images
 # ----------------------------
 PRODUCTS = [
     {
@@ -9,6 +9,7 @@ PRODUCTS = [
         "store": "Costco",
         "diet": "High-Protein, Low-Carb",
         "category": "Snacks",
+        "image": "https://via.placeholder.com/100?text=Almond+Butter",
         "nutrition": {
             "calories": 190,
             "protein": 7,
@@ -21,6 +22,7 @@ PRODUCTS = [
         "store": "Costco",
         "diet": "High-Protein, Low-Carb",
         "category": "Pantry",
+        "image": "https://via.placeholder.com/100?text=Coconut+Milk",
         "nutrition": {
             "calories": 120,
             "protein": 1,
@@ -33,6 +35,7 @@ PRODUCTS = [
         "store": "Costco",
         "diet": "High-Protein, Low-Carb",
         "category": "Meat",
+        "image": "https://via.placeholder.com/100?text=Sausage",
         "nutrition": {
             "calories": 170,
             "protein": 13,
@@ -72,6 +75,7 @@ st.markdown("Use the sidebar to choose your store, diet, and category.")
 
 for product in filtered_products:
     with st.container():
+        st.image(product.get("image", "https://via.placeholder.com/100"), width=100)
         st.subheader(product["name"])
         st.write(f"**Category:** {product['category']}")
         st.write("**Nutrition per serving:**")
