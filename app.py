@@ -39,8 +39,81 @@ PRODUCTS = [
             "carbs": 3,
             "fat": 12
         }
+    },
+    {
+        "name": "Kirkland Hard-Boiled Eggs 2-Pack",
+        "store": "Costco",
+        "diet": "High-Protein, Low-Carb",
+        "category": "Dairy",
+        "nutrition": {
+            "calories": 140,
+            "protein": 12,
+            "carbs": 1,
+            "fat": 10
+        }
+    },
+    {
+        "name": "Good Culture Cottage Cheese, 2%",
+        "store": "Costco",
+        "diet": "High-Protein, Low-Carb",
+        "category": "Dairy",
+        "nutrition": {
+            "calories": 110,
+            "protein": 14,
+            "carbs": 3,
+            "fat": 4
+        }
+    },
+    {
+        "name": "Chomps Grass-Fed Beef Stick",
+        "store": "Costco",
+        "diet": "High-Protein, Low-Carb",
+        "category": "Snacks",
+        "nutrition": {
+            "calories": 100,
+            "protein": 9,
+            "carbs": 0,
+            "fat": 6
+        }
+    },
+    {
+        "name": "Nature’s Garden Keto Snack Mix",
+        "store": "Costco",
+        "diet": "High-Protein, Low-Carb",
+        "category": "Snacks",
+        "nutrition": {
+            "calories": 180,
+            "protein": 6,
+            "carbs": 4,
+            "fat": 16
+        }
+    },
+    {
+        "name": "Kirkland Signature Turkey Burgers",
+        "store": "Costco",
+        "diet": "High-Protein, Low-Carb",
+        "category": "Frozen",
+        "nutrition": {
+            "calories": 200,
+            "protein": 21,
+            "carbs": 0,
+            "fat": 12
+        }
+    },
+    {
+        "name": "Organic Blueberries (Fresh)",
+        "store": "Costco",
+        "diet": "High-Protein, Low-Carb",
+        "category": "Fruit",
+        "nutrition": {
+            "calories": 80,
+            "protein": 1,
+            "carbs": 18,
+            "fat": 0
+        }
     }
 ]
+
 
 # ----------------------------
 # Session State for Cart
