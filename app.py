@@ -4,10 +4,33 @@ import pandas as pd
 import json
 import io
 
-# Load product data
+# ----------------------------
+# Load and Tag Products
+# ----------------------------
 with open("products_wholefoods_with_nutrition.json") as f:
     PRODUCTS = json.load(f)
 
+def generate_tags(product):
+    tags = []
+    n = product.get("nutrition", {})
+    if not all(k in n and n[k] is not None for k in ["protein", "fat", "carbs", "calories"]):
+        return tags
+    if n["protein"] >= 20:
+        tags.append("High Protein")
+    if n["carbs"] <= 10:
+        tags.append("Low Carb")
+    if n["fat"] <= 5:
+        tags.append("Low Fat")
+    if n["calories"] <= 200:
+        tags.append("Light Meal")
+    return tags
+
+for p in PRODUCTS:
+    p["tags"] = generate_tags(p)
+
+# ----------------------------
+# Streamlit App
+# ----------------------------
 if "cart" not in st.session_state:
     st.session_state.cart = []
 if "favorites" not in st.session_state:
@@ -19,12 +42,9 @@ category_options = sorted(list(set(p["category"] for p in PRODUCTS)))
 category = st.sidebar.selectbox("Select a category", ["All"] + category_options)
 search_query = st.sidebar.text_input("Search by product name:")
 
-# Nutrition filters
-st.sidebar.markdown("### Nutrition Filters")
-min_protein = st.sidebar.slider("Min Protein (g)", 0, 50, 0)
-max_fat = st.sidebar.slider("Max Fat (g)", 0, 50, 50)
-max_carbs = st.sidebar.slider("Max Carbs (g)", 0, 50, 50)
-max_calories = st.sidebar.slider("Max Calories", 0, 1000, 1000)
+# Tag filters
+all_tags = ["High Protein", "Low Carb", "Low Fat", "Light Meal"]
+selected_tags = st.sidebar.multiselect("Filter by Tags", all_tags)
 
 # Filtered products
 filtered_products = []
@@ -33,10 +53,7 @@ for p in PRODUCTS:
         continue
     if search_query.lower() not in p["name"].lower():
         continue
-    n = p.get("nutrition", {})
-    if any(v is None for v in [n.get("calories"), n.get("protein"), n.get("carbs"), n.get("fat")]):
-        continue
-    if n["protein"] < min_protein or n["fat"] > max_fat or n["carbs"] > max_carbs or n["calories"] > max_calories:
+    if selected_tags and not all(tag in p["tags"] for tag in selected_tags):
         continue
     filtered_products.append(p)
 
@@ -51,6 +68,8 @@ for idx, product in enumerate(filtered_products):
             st.image(product["image"], width=150)
         st.write("**Nutrition per serving:**")
         st.write(product["nutrition"])
+        if product.get("tags"):
+            st.write("**Tags:**", ", ".join(product["tags"]))
 
         if st.button(f"Add to Cart: {product['name']}", key=f"add_{idx}"):
             st.session_state.cart.append(product["name"])
