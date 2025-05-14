@@ -51,30 +51,35 @@ for p in PRODUCTS:
         continue
     filtered_products.append(p)
 
-# Display function
+# Tag style helper
+def tag_html(tag):
+    return f"<span style='background-color:#e6f4ea; color:#2e7d32; padding:2px 8px; margin-right:6px; border-radius:12px; font-size:13px'>{tag}</span>"
+
+# Product display
 def display_product(product, key_idx):
-    st.markdown(f"**{product['name']}**")
-    st.write(f"Category: {product['category']}")
+    st.markdown(f"#### {product['name']}")
+    st.caption(f"Category: {product['category']}")
     if product.get("image"):
-        st.image(product["image"], width=150)
+        st.image(product["image"], width=140)
 
     n = product.get("nutrition", {})
     if all(k in n and n[k] is not None for k in ["calories", "protein", "carbs", "fat"]):
         c1, c2, c3, c4 = st.columns(4)
-        c1.metric("🔥 Calories", f"{n['calories']} kcal")
-        c2.metric("💪 Protein", f"{n['protein']}g")
-        c3.metric("🍞 Carbs", f"{n['carbs']}g")
-        c4.metric("🧈 Fat", f"{n['fat']}g")
+        c1.markdown(f"🔥 **Calories**<br>{n['calories']} kcal", unsafe_allow_html=True)
+        c2.markdown(f"💪 **Protein**<br>{n['protein']}g", unsafe_allow_html=True)
+        c3.markdown(f"🍞 **Carbs**<br>{n['carbs']}g", unsafe_allow_html=True)
+        c4.markdown(f"🧈 **Fat**<br>{n['fat']}g", unsafe_allow_html=True)
 
     if product.get("tags"):
-        st.markdown("**Tags:** " + "  ".join([f"`{tag}`" for tag in product["tags"]]))
+        tags_html = "".join([tag_html(tag) for tag in product["tags"]])
+        st.markdown(f"**Tags:** {tags_html}", unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
-    with col1:
+    b1, b2 = st.columns([1, 1])
+    with b1:
         if st.button("🛒 Add to Cart", key=f"add_{key_idx}"):
             st.session_state.cart.append(product["name"])
             st.success(f"Added to cart: {product['name']}")
-    with col2:
+    with b2:
         if product["name"] in st.session_state.favorites:
             if st.button("⭐ Unfavorite", key=f"unfav_{key_idx}"):
                 st.session_state.favorites.remove(product["name"])
