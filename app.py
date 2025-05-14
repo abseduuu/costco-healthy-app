@@ -63,5 +63,12 @@ for idx, product in enumerate(filtered):
         st.image(image_url, use_container_width=True)
         st.markdown(f"<div class='product-title'>{product['name']}</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='product-brand'>{product.get('brand', '')}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='product-price'>${product['price']:.2f}</div>", unsafe_allow_html=True)
+        price = product.get('price')
+try:
+    price_display = f"${float(price):.2f}"
+except (TypeError, ValueError):
+    price_display = "Price N/A"
+
+st.markdown(f"<div class='product-price'>{price_display}</div>", unsafe_allow_html=True)
+
         st.markdown(f"<div class='product-tags'>{', '.join(product.get('tags', []))}</div>", unsafe_allow_html=True)
