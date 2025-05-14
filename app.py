@@ -4,11 +4,11 @@ import pandas as pd
 import json
 import io
 
-# Load data
+# Load product data
 with open("products_wholefoods_with_nutrition.json") as f:
     PRODUCTS = json.load(f)
 
-# Tag generator
+# Generate tags
 def generate_tags(product):
     tags = []
     n = product.get("nutrition", {})
@@ -32,49 +32,61 @@ if "cart" not in st.session_state:
 if "favorites" not in st.session_state:
     st.session_state.favorites = []
 
-# Tag style
+# Tag display
 def tag_html(tag):
     return f"<span style='background-color:#e6f4ea; color:#2e7d32; padding:2px 8px; margin:2px; display:inline-block; border-radius:12px; font-size:13px'>{tag}</span>"
 
-# Floating header
+# Floating header + top nav style
 st.markdown("""
 <style>
 .floating-header {
     position: sticky;
     top: 0;
     background: white;
-    padding: 0.5rem 0;
+    padding: 0.75rem 0;
     z-index: 999;
     border-bottom: 1px solid #f0f0f0;
 }
 .floating-header h1 {
     font-size: 28px;
-    margin-bottom: 0;
+    margin: 0;
+}
+.top-filters {
+    margin: 0.5rem 0 1.25rem;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #ddd;
 }
 </style>
 <div class='floating-header'><h1>🥦 Whole Foods Product Finder</h1></div>
 """, unsafe_allow_html=True)
 
-# Sidebar filters
-st.sidebar.header("Filter Products")
-category_options = sorted(list(set(p["category"] for p in PRODUCTS)))
-category = st.sidebar.selectbox("Select a category", ["All"] + category_options)
-search_query = st.sidebar.text_input("Search by product name:")
-all_tags = ["High Protein", "Low Carb", "Low Fat", "Light Meal"]
-selected_tags = st.sidebar.multiselect("Filter by Tags", all_tags)
+# Top nav filters block
+st.markdown("<div class='top-filters'>", unsafe_allow_html=True)
+c1, c2, c3 = st.columns([2, 2, 2])
+with c1:
+    category_options = sorted(list(set(p["category"] for p in PRODUCTS)))
+    category = st.selectbox("Category", ["All"] + category_options)
+with c2:
+    all_tags = ["High Protein", "Low Carb", "Low Fat", "Light Meal"]
+    selected_tags = st.multiselect("Diet Tags", all_tags)
+with c3:
+    search_query = st.text_input("Search by name")
+st.markdown("</div>", unsafe_allow_html=True)
 
-# Filter products
+# Filter logic
 filtered_products = []
 for p in PRODUCTS:
     if category != "All" and p["category"] != category:
         continue
-    if search_query.lower() not in p["name"].lower():
+    if search_query and search_query.lower() not in p["name"].lower():
         continue
     if selected_tags and not all(tag in p["tags"] for tag in selected_tags):
         continue
     filtered_products.append(p)
 
-# Display function
+# Product display
 def display_product(product, key_idx):
     st.markdown(f"<h4>{product['name']}</h4>", unsafe_allow_html=True)
     st.caption(f"Category: {product['category']}")
@@ -111,7 +123,7 @@ def display_product(product, key_idx):
                 st.success(f"Added to favorites: {product['name']}")
     st.markdown("---")
 
-# Display in columns
+# 2-column layout
 for i in range(0, len(filtered_products), 2):
     cols = st.columns(2)
     for j in range(2):
@@ -119,7 +131,7 @@ for i in range(0, len(filtered_products), 2):
             with cols[j]:
                 display_product(filtered_products[i + j], key_idx=i + j)
 
-# Sidebar Cart
+# Sidebar: cart, macros, favorites, export
 st.sidebar.header("🛒 Your Cart")
 total_macros = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
 updated_cart = []
@@ -148,7 +160,6 @@ if updated_cart:
     st.sidebar.write(f"Carbs: {total_macros['carbs']}g")
     st.sidebar.write(f"Fat: {total_macros['fat']}g")
 
-# Sidebar Favorites
 st.sidebar.header("⭐ Favorites")
 if st.session_state.favorites:
     for item in st.session_state.favorites:
@@ -156,7 +167,6 @@ if st.session_state.favorites:
 else:
     st.sidebar.write("No favorites yet.")
 
-# Export
 if updated_cart:
     st.sidebar.markdown("---")
     st.sidebar.subheader("🧾 Export Your Cart")
