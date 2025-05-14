@@ -4,7 +4,6 @@ import pandas as pd
 import json
 import io
 
-
 # Load product data
 with open("products_wholefoods_with_nutrition.json") as f:
     PRODUCTS = json.load(f)
@@ -20,12 +19,26 @@ category_options = sorted(list(set(p["category"] for p in PRODUCTS)))
 category = st.sidebar.selectbox("Select a category", ["All"] + category_options)
 search_query = st.sidebar.text_input("Search by product name:")
 
+# Nutrition filters
+st.sidebar.markdown("### Nutrition Filters")
+min_protein = st.sidebar.slider("Min Protein (g)", 0, 50, 0)
+max_fat = st.sidebar.slider("Max Fat (g)", 0, 50, 50)
+max_carbs = st.sidebar.slider("Max Carbs (g)", 0, 50, 50)
+max_calories = st.sidebar.slider("Max Calories", 0, 1000, 1000)
+
 # Filtered products
-filtered_products = [
-    p for p in PRODUCTS
-    if (category == "All" or p["category"] == category)
-    and (search_query.lower() in p["name"].lower())
-]
+filtered_products = []
+for p in PRODUCTS:
+    if category != "All" and p["category"] != category:
+        continue
+    if search_query.lower() not in p["name"].lower():
+        continue
+    n = p.get("nutrition", {})
+    if any(v is None for v in [n.get("calories"), n.get("protein"), n.get("carbs"), n.get("fat")]):
+        continue
+    if n["protein"] < min_protein or n["fat"] > max_fat or n["carbs"] > max_carbs or n["calories"] > max_calories:
+        continue
+    filtered_products.append(p)
 
 # Main content
 st.title("🥦 Whole Foods Product Finder")
@@ -36,7 +49,7 @@ for idx, product in enumerate(filtered_products):
         st.write(f"**Category:** {product['category']}")
         if product.get("image"):
             st.image(product["image"], width=150)
-        st.write("**Nutrition:**")
+        st.write("**Nutrition per serving:**")
         st.write(product["nutrition"])
 
         if st.button(f"Add to Cart: {product['name']}", key=f"add_{idx}"):
