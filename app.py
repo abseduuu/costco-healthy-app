@@ -26,9 +26,6 @@ def generate_tags(product):
 for p in PRODUCTS:
     p["tags"] = generate_tags(p)
 
-# ----------------------------
-# Streamlit App
-# ----------------------------
 if "cart" not in st.session_state:
     st.session_state.cart = []
 if "favorites" not in st.session_state:
@@ -43,7 +40,7 @@ search_query = st.sidebar.text_input("Search by product name:")
 all_tags = ["High Protein", "Low Carb", "Low Fat", "Light Meal"]
 selected_tags = st.sidebar.multiselect("Filter by Tags", all_tags)
 
-# Filtered products
+# Filter products
 filtered_products = []
 for p in PRODUCTS:
     if category != "All" and p["category"] != category:
@@ -54,48 +51,52 @@ for p in PRODUCTS:
         continue
     filtered_products.append(p)
 
-# Main content
+# Display function
+def display_product(product, key_idx):
+    st.markdown(f"**{product['name']}**")
+    st.write(f"Category: {product['category']}")
+    if product.get("image"):
+        st.image(product["image"], width=150)
+
+    n = product.get("nutrition", {})
+    if all(k in n and n[k] is not None for k in ["calories", "protein", "carbs", "fat"]):
+        c1, c2, c3, c4 = st.columns(4)
+        c1.metric("🔥 Calories", f"{n['calories']} kcal")
+        c2.metric("💪 Protein", f"{n['protein']}g")
+        c3.metric("🍞 Carbs", f"{n['carbs']}g")
+        c4.metric("🧈 Fat", f"{n['fat']}g")
+
+    if product.get("tags"):
+        st.markdown("**Tags:** " + "  ".join([f"`{tag}`" for tag in product["tags"]]))
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🛒 Add to Cart", key=f"add_{key_idx}"):
+            st.session_state.cart.append(product["name"])
+            st.success(f"Added to cart: {product['name']}")
+    with col2:
+        if product["name"] in st.session_state.favorites:
+            if st.button("⭐ Unfavorite", key=f"unfav_{key_idx}"):
+                st.session_state.favorites.remove(product["name"])
+                st.warning(f"Removed from favorites: {product['name']}")
+        else:
+            if st.button("⭐ Favorite", key=f"fav_{key_idx}"):
+                st.session_state.favorites.append(product["name"])
+                st.success(f"Added to favorites: {product['name']}")
+
+    st.markdown("---")
+
+# Main layout
 st.title("🥦 Whole Foods Product Finder")
 
-for idx, product in enumerate(filtered_products):
-    with st.container():
-        st.markdown(f"### {product['name']}")
-        st.write(f"**Category:** {product['category']}")
-        if product.get("image"):
-            st.image(product["image"], width=180)
+for i in range(0, len(filtered_products), 2):
+    cols = st.columns(2)
+    for j in range(2):
+        if i + j < len(filtered_products):
+            with cols[j]:
+                display_product(filtered_products[i + j], key_idx=i + j)
 
-        n = product.get("nutrition", {})
-        if all(k in n and n[k] is not None for k in ["calories", "protein", "carbs", "fat"]):
-            st.markdown("**Nutrition per serving:**")
-            st.markdown(f"""
-            - Calories: {n['calories']} kcal  
-            - Protein: {n['protein']}g  
-            - Carbs: {n['carbs']}g  
-            - Fat: {n['fat']}g
-            """)
-
-        if product.get("tags"):
-            tag_line = "  ".join([f"`{t}`" for t in product["tags"]])
-            st.markdown(f"**Tags:** {tag_line}")
-
-        col1, col2 = st.columns([1, 1])
-        with col1:
-            if st.button(f"🛒 Add to Cart", key=f"add_{idx}"):
-                st.session_state.cart.append(product["name"])
-                st.success(f"Added to cart: {product['name']}")
-        with col2:
-            if product["name"] in st.session_state.favorites:
-                if st.button("⭐ Unfavorite", key=f"unfav_{idx}"):
-                    st.session_state.favorites.remove(product["name"])
-                    st.warning(f"Removed from favorites: {product['name']}")
-            else:
-                if st.button("⭐ Favorite", key=f"fav_{idx}"):
-                    st.session_state.favorites.append(product["name"])
-                    st.success(f"Added to favorites: {product['name']}")
-
-        st.markdown("---")
-
-# Cart display
+# Sidebar Cart
 st.sidebar.header("🛒 Your Cart")
 total_macros = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
 updated_cart = []
