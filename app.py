@@ -4,9 +4,7 @@ import pandas as pd
 import json
 import io
 
-# ----------------------------
-# Load and Tag Products
-# ----------------------------
+# Load product data
 with open("products_wholefoods_with_nutrition.json") as f:
     PRODUCTS = json.load(f)
 
@@ -42,7 +40,6 @@ category_options = sorted(list(set(p["category"] for p in PRODUCTS)))
 category = st.sidebar.selectbox("Select a category", ["All"] + category_options)
 search_query = st.sidebar.text_input("Search by product name:")
 
-# Tag filters
 all_tags = ["High Protein", "Low Carb", "Low Fat", "Light Meal"]
 selected_tags = st.sidebar.multiselect("Filter by Tags", all_tags)
 
@@ -62,27 +59,39 @@ st.title("🥦 Whole Foods Product Finder")
 
 for idx, product in enumerate(filtered_products):
     with st.container():
-        st.subheader(product["name"])
+        st.markdown(f"### {product['name']}")
         st.write(f"**Category:** {product['category']}")
         if product.get("image"):
-            st.image(product["image"], width=150)
-        st.write("**Nutrition per serving:**")
-        st.write(product["nutrition"])
+            st.image(product["image"], width=180)
+
+        n = product.get("nutrition", {})
+        if all(k in n and n[k] is not None for k in ["calories", "protein", "carbs", "fat"]):
+            st.markdown("**Nutrition per serving:**")
+            st.markdown(f"""
+            - Calories: {n['calories']} kcal  
+            - Protein: {n['protein']}g  
+            - Carbs: {n['carbs']}g  
+            - Fat: {n['fat']}g
+            """)
+
         if product.get("tags"):
-            st.write("**Tags:**", ", ".join(product["tags"]))
+            tag_line = "  ".join([f"`{t}`" for t in product["tags"]])
+            st.markdown(f"**Tags:** {tag_line}")
 
-        if st.button(f"Add to Cart: {product['name']}", key=f"add_{idx}"):
-            st.session_state.cart.append(product["name"])
-            st.success(f"Added to cart: {product['name']}")
-
-        if product["name"] in st.session_state.favorites:
-            if st.button(f"Unfavorite: {product['name']}", key=f"unfav_{idx}"):
-                st.session_state.favorites.remove(product["name"])
-                st.warning(f"Removed from favorites: {product['name']}")
-        else:
-            if st.button(f"⭐ Favorite: {product['name']}", key=f"fav_{idx}"):
-                st.session_state.favorites.append(product["name"])
-                st.success(f"Added to favorites: {product['name']}")
+        col1, col2 = st.columns([1, 1])
+        with col1:
+            if st.button(f"🛒 Add to Cart", key=f"add_{idx}"):
+                st.session_state.cart.append(product["name"])
+                st.success(f"Added to cart: {product['name']}")
+        with col2:
+            if product["name"] in st.session_state.favorites:
+                if st.button("⭐ Unfavorite", key=f"unfav_{idx}"):
+                    st.session_state.favorites.remove(product["name"])
+                    st.warning(f"Removed from favorites: {product['name']}")
+            else:
+                if st.button("⭐ Favorite", key=f"fav_{idx}"):
+                    st.session_state.favorites.append(product["name"])
+                    st.success(f"Added to favorites: {product['name']}")
 
         st.markdown("---")
 
