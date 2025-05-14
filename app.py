@@ -6,7 +6,7 @@ import io
 
 
 # Load product data
-with open("products_wholefoods_all_categories.json") as f:
+with open("products_wholefoods_with_nutrition.json") as f:
     PRODUCTS = json.load(f)
 
 if "cart" not in st.session_state:
