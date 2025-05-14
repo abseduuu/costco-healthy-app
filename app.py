@@ -8,7 +8,6 @@ import io
 with open("products_wholefoods_with_nutrition.json") as f:
     PRODUCTS = json.load(f)
 
-# Generate tags
 def generate_tags(product):
     tags = []
     n = product.get("nutrition", {})
@@ -32,11 +31,9 @@ if "cart" not in st.session_state:
 if "favorites" not in st.session_state:
     st.session_state.favorites = []
 
-# Tag display
 def tag_html(tag):
     return f"<span style='background-color:#e6f4ea; color:#2e7d32; padding:2px 8px; margin:2px; display:inline-block; border-radius:12px; font-size:13px'>{tag}</span>"
 
-# Floating header + top nav style
 st.markdown("""
 <style>
 .floating-header {
@@ -62,20 +59,22 @@ st.markdown("""
 <div class='floating-header'><h1>🥦 Whole Foods Product Finder</h1></div>
 """, unsafe_allow_html=True)
 
-# Top nav filters block
+# Top nav filters
 st.markdown("<div class='top-filters'>", unsafe_allow_html=True)
-c1, c2, c3 = st.columns([2, 2, 2])
-with c1:
+col1, col2, col3, col4 = st.columns([2, 2, 2, 2])
+with col1:
     category_options = sorted(list(set(p["category"] for p in PRODUCTS)))
     category = st.selectbox("Category", ["All"] + category_options)
-with c2:
+with col2:
     all_tags = ["High Protein", "Low Carb", "Low Fat", "Light Meal"]
     selected_tags = st.multiselect("Diet Tags", all_tags)
-with c3:
+with col3:
     search_query = st.text_input("Search by name")
+with col4:
+    sort_by = st.selectbox("Sort by", ["None", "Protein (High → Low)", "Calories (Low → High)", "Name (A → Z)"])
 st.markdown("</div>", unsafe_allow_html=True)
 
-# Filter logic
+# Filter products
 filtered_products = []
 for p in PRODUCTS:
     if category != "All" and p["category"] != category:
@@ -86,7 +85,15 @@ for p in PRODUCTS:
         continue
     filtered_products.append(p)
 
-# Product display
+# Apply sorting
+if sort_by == "Protein (High → Low)":
+    filtered_products.sort(key=lambda x: x.get("nutrition", {}).get("protein", 0), reverse=True)
+elif sort_by == "Calories (Low → High)":
+    filtered_products.sort(key=lambda x: x.get("nutrition", {}).get("calories", float("inf")))
+elif sort_by == "Name (A → Z)":
+    filtered_products.sort(key=lambda x: x["name"].lower())
+
+# Display product
 def display_product(product, key_idx):
     st.markdown(f"<h4>{product['name']}</h4>", unsafe_allow_html=True)
     st.caption(f"Category: {product['category']}")
@@ -123,7 +130,7 @@ def display_product(product, key_idx):
                 st.success(f"Added to favorites: {product['name']}")
     st.markdown("---")
 
-# 2-column layout
+# Layout
 for i in range(0, len(filtered_products), 2):
     cols = st.columns(2)
     for j in range(2):
@@ -131,7 +138,7 @@ for i in range(0, len(filtered_products), 2):
             with cols[j]:
                 display_product(filtered_products[i + j], key_idx=i + j)
 
-# Sidebar: cart, macros, favorites, export
+# Sidebar
 st.sidebar.header("🛒 Your Cart")
 total_macros = {"calories": 0, "protein": 0, "carbs": 0, "fat": 0}
 updated_cart = []
