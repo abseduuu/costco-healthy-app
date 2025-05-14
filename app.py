@@ -4,6 +4,7 @@ import pandas as pd
 import json
 import io
 
+
 # Load product data
 with open("products_wholefoods_all_categories.json") as f:
     PRODUCTS = json.load(f)
