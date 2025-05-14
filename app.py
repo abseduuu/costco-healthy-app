@@ -6,10 +6,10 @@ import json
 with open('products_wholefoods_with_nutrition.json') as f:
     products = json.load(f)
 
-# ---------- Config ----------
+# ---------- Streamlit Config ----------
 st.set_page_config(page_title="Doji Market", layout="wide")
 
-# ---------- Header ----------
+# ---------- Custom CSS ----------
 st.markdown("""
     <style>
     .header-title {
@@ -41,22 +41,26 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
+# ---------- Header ----------
 st.markdown('<div class="header-title">Doji Market</div>', unsafe_allow_html=True)
 
-# ---------- Filters ----------
+# ---------- Category Filter ----------
 categories = sorted(set([p.get("category", "Uncategorized") for p in products]))
 selected_category = st.selectbox("Category", categories)
 
 filtered = [p for p in products if p.get("category") == selected_category]
 
-# ---------- Grid Display ----------
-st.write("")  # space
+# ---------- Product Grid ----------
 columns = st.columns(3)
 
 for idx, product in enumerate(filtered):
     col = columns[idx % 3]
     with col:
-        st.image(product.get("image_url", ""), use_column_width=True)
+        image_url = product.get("image_url", "")
+        if not image_url or not image_url.startswith("http"):
+            image_url = "https://via.placeholder.com/300x300.png?text=No+Image"
+
+        st.image(image_url, use_container_width=True)
         st.markdown(f"<div class='product-title'>{product['name']}</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='product-brand'>{product.get('brand', '')}</div>", unsafe_allow_html=True)
         st.markdown(f"<div class='product-price'>${product['price']:.2f}</div>", unsafe_allow_html=True)
